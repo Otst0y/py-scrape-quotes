@@ -17,7 +17,7 @@ class Quote:
     tags: list[str]
 
 
-def get_pages() -> Generator[str, Any, None]:
+def get_pages() -> Generator[BeautifulSoup, Any, None]:
     page_number = 0
     while True:
         page_number += 1
@@ -28,12 +28,10 @@ def get_pages() -> Generator[str, Any, None]:
         if not soup.select(".quote"):
             break
 
-        yield page_url
+        yield soup
 
 
-def parse_page(page_url: str) -> list[Quote]:
-    text = requests.get(page_url).content
-    soup = BeautifulSoup(text, "html.parser")
+def parse_page(soup: BeautifulSoup) -> list[Quote]:
     quotes = soup.select(".quote")
     return [Quote(
         text=quote.select_one(".text").text,
